@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="tt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Word Pair</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        input, button {
+            margin: 10px;
+        }
+        .red-button {
+            background-color: red;
+            color: white;
+        }
+        .green-button {
+            background-color: green;
+            color: white;
+        }
+        .message {
+            margin-bottom: 20px;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <div id="message" class="message"></div>
+    <input type="text" id="output" readonly>
+    <input type="text" id="input">
+    <button class="red-button" onclick="handleRedButton()">Не знаю</button>
+    <button class="green-button" onclick="handleGreenButton()">Проверить</button>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
+<script>
+const wordPairs = [
+    ["алма", "яблоко"],
+    ["юл", "дорога"],
+    ["чәчәк", "цветок"],
+    ["жиләк", "ягода"],
+    ["әфлисун", "апельсин"]
+];
+
+let currentPair = null;
+let isTatarToRussian = true; // Начинаем с перевода с татарского на русский
+
+function getRandomPair() {
+    const randomIndex = Math.floor(Math.random() * wordPairs.length);
+    return wordPairs[randomIndex];
+}
+
+function displayWord(word) {
+    const output = document.getElementById("output");
+    output.value = word;
+}
+
+function displayMessage(message) {
+    const messageDiv = document.getElementById("message");
+    messageDiv.textContent = message;
+}
+
+function handleRedButton() {
+    if (currentPair) {
+        if (isTatarToRussian) {
+            displayWord(currentPair[1]); // Показываем русское слово
+        } else {
+            displayWord(currentPair[0]); // Показываем татарское слово
+        }
+        setTimeout(() => {
+            startNewRound();
+        }, 3000);
+    }
+}
+
+function handleGreenButton() {
+    const userInput = document.getElementById("input").value.trim();
+    if (currentPair) {
+        if (isTatarToRussian) {
+            if (userInput.toLowerCase() === currentPair[1].toLowerCase()) {
+                displayMessage("Правильно!");
+                setTimeout(() => {
+                    displayMessage("");
+                    startNewRound();
+                }, 1000);
+            } else {
+                displayMessage(`Неправильно! (${currentPair[1]})`);
+		setTimeout(() => {
+                    displayMessage("");
+                    startNewRound();
+                }, 1000);
+            }
+        } else {
+            if (userInput.toLowerCase() === currentPair[0].toLowerCase()) {
+                displayMessage("Правильно!");
+                setTimeout(() => {
+                    displayMessage("");
+                    startNewRound();
+                }, 1000);
+            } else {
+                displayMessage(`Неправильно! (${currentPair[0]})`);
+		setTimeout(() => {
+                    displayMessage("");
+                    startNewRound();
+                }, 1000);
+            }
+        }
+        isTatarToRussian = !isTatarToRussian; // Меняем направление перевода после каждого ответа
+    }
+}
+
+function startNewRound() {
+    currentPair = getRandomPair();
+    if (isTatarToRussian) {
+        displayWord(currentPair[0]); // Показываем татарское слово
+    } else {
+        displayWord(currentPair[1]); // Показываем русское слово
+    }
+    document.getElementById("input").value = '';
+    displayMessage("");
+}
+
+// Начать первый раунд
+startNewRound();
+</script>
